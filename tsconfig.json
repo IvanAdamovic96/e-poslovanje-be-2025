@@ -2,7 +2,10 @@
   "compilerOptions": {
     // Environment setup & latest features
     "lib": ["ESNext"],
-    "target": "ESNext",
+    "target": "ES6",
+    //"experimentalDecorators": true,
+    //"strictPropertyInitialization": false,
+    //"emitDecoratorMetadata": true,
     "module": "ESNext",
     "moduleDetection": "force",
     "jsx": "react-jsx",
