@@ -29,6 +29,9 @@ export class User {
   @Column("varchar", { name: "phone", length: 255 })
   phone: string;
 
+  @Column("varchar", { name: "password", length: 255 })
+  password: string;
+
   @Column("datetime", {
     name: "created_at",
     default: () => "CURRENT_TIMESTAMP",
