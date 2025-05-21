@@ -6,12 +6,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Bikes } from "./Bikes";
+import { Projection } from "./Projection";
 import { User } from "./User";
 
-@Index("fk_reservation_bikes_idx", ["bikeId"], {})
+@Index("fk_reservation_projection_idx", ["projectionId"], {})
 @Index("fk_reservation_user_idx", ["userId"], {})
-@Entity("reservation", { schema: "bikes-praktikum" })
+@Entity("reservation", { schema: "eposlovanje" })
 export class Reservation {
   @PrimaryGeneratedColumn({
     type: "int",
@@ -23,11 +23,20 @@ export class Reservation {
   @Column("int", { name: "user_id", unsigned: true })
   userId: number;
 
-  @Column("int", { name: "bike_id", unsigned: true })
-  bikeId: number;
+  @Column("int", { name: "projection_id", unsigned: true })
+  projectionId: number;
 
-  @Column("decimal", { name: "total_price", precision: 10, scale: 2 })
-  totalPrice: string;
+  @Column("int", { name: "num_of_seats", unsigned: true })
+  numOfSeats: number;
+
+  @Column("datetime", { name: "watched_at", nullable: true })
+  watchedAt: Date | null;
+
+  @Column("text", { name: "comment", nullable: true })
+  comment: string | null;
+
+  @Column("int", { name: "rating", nullable: true, unsigned: true })
+  rating: number | null;
 
   @Column("datetime", {
     name: "created_at",
@@ -41,12 +50,12 @@ export class Reservation {
   @Column("datetime", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
 
-  @ManyToOne(() => Bikes, (bikes) => bikes.reservations, {
+  @ManyToOne(() => Projection, (projection) => projection.reservations, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @JoinColumn([{ name: "bike_id", referencedColumnName: "bikeId" }])
-  bike: Bikes;
+  @JoinColumn([{ name: "projection_id", referencedColumnName: "projectionId" }])
+  projection: Projection;
 
   @ManyToOne(() => User, (user) => user.reservations, {
     onDelete: "CASCADE",

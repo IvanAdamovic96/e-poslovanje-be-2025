@@ -6,13 +6,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Bikes } from "./Bikes";
 import { User } from "./User";
-import type { BikeModel } from "../models/bike.model";
 
 @Index("fk_bookmark_user_idx", ["userId"], {})
-@Index("fk_bookmark_bikes_idx", ["bikeId"], {})
-@Entity("bookmark", { schema: "bikes-praktikum" })
+@Entity("bookmark", { schema: "eposlovanje" })
 export class Bookmark {
   @PrimaryGeneratedColumn({ type: "int", name: "bookmark_id", unsigned: true })
   bookmarkId: number;
@@ -20,10 +17,8 @@ export class Bookmark {
   @Column("int", { name: "user_id", unsigned: true })
   userId: number;
 
-  @Column("int", { name: "bike_id", unsigned: true })
-  bikeId: number;
-
-  bike: BikeModel | null
+  @Column("int", { name: "movie_id", unsigned: true })
+  movieId: number;
 
   @Column("datetime", {
     name: "created_at",
@@ -31,16 +26,8 @@ export class Bookmark {
   })
   createdAt: Date;
 
-
   @Column("datetime", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
-
-  @ManyToOne(() => Bikes, (bikes) => bikes.bookmarks, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-  })
-  @JoinColumn([{ name: "bike_id", referencedColumnName: "bikeId" }])
-  bike: Bikes;
 
   @ManyToOne(() => User, (user) => user.bookmarks, {
     onDelete: "CASCADE",

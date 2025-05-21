@@ -1,6 +1,6 @@
 import { IsNull } from "typeorm";
 import { AppDataSource } from "../db";
-import { Cinema } from "../entities/Cinema";
+import { Cinema } from "../entities2/Cinema";
 
 const repo = AppDataSource.getRepository(Cinema)
 

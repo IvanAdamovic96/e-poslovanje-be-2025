@@ -1,12 +1,12 @@
 import express, { type Request, type Response } from 'express'
 import cors from 'cors'
-import { MovieRoute } from './routes/movie.route';
 import morgan from 'morgan';
 import { configDotenv } from 'dotenv';
 import { AppDataSource } from './db';
-import { CinemaRoute } from './routes/cinema.route';
 import { UserRoute } from './routes/user.route';
 import { UserService } from './services/user.service';
+import { BikeRoute } from './routes/bike.route';
+import { BookmarkRoute } from './routes/bookmark.route';
 
 const app = express();
 app.use(cors());
@@ -15,10 +15,13 @@ app.use(express.json())
 
 
 // Application routes
+
 app.use(UserService.validateToken);
-app.use('/api/user', UserRoute);
-app.use('/api/movie', MovieRoute);
-app.use('/api/cinema', CinemaRoute);
+app.use('/bikes', BikeRoute)
+app.use('/user', UserRoute)
+app.use('/bookmark', BookmarkRoute)
+//app.use('/api/movie', MovieRoute);
+//app.use('/api/cinema', CinemaRoute);
 
 
 //404 Not Found
