@@ -7,11 +7,13 @@ import { UserRoute } from './routes/user.route';
 import { UserService } from './services/user.service';
 import { BikeRoute } from './routes/bike.route';
 import { BookmarkRoute } from './routes/bookmark.route';
+import { ReservationRoute } from './routes/reservation.route';
 
 const app = express();
-app.use(cors());
 app.use(morgan('dev'))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 
 // Application routes
@@ -20,8 +22,7 @@ app.use(UserService.validateToken);
 app.use('/bikes', BikeRoute)
 app.use('/user', UserRoute)
 app.use('/bookmark', BookmarkRoute)
-//app.use('/api/movie', MovieRoute);
-//app.use('/api/cinema', CinemaRoute);
+app.use('/reservation', ReservationRoute)
 
 
 //404 Not Found

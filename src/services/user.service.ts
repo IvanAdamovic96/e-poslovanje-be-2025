@@ -7,6 +7,7 @@ import type { Response } from "express";
 import { MovieService } from "./movie.service";
 import { BikeService } from "./bike.service";
 import { BookmarkService } from "./bookmark.service";
+import { dataExists } from "../utils";
 
 const repo = AppDataSource.getRepository(User)
 const tokenSecret = process.env.JWT_SECRET
@@ -57,22 +58,11 @@ export class UserService {
                 lastName: true,
                 email: true,
                 phone: true,
-                /* bookmarks: {
-                    bookmarkId: true,
-                    bikeId: true,
-                    createdAt: true
-                } */
             },
             where: {
                 email: email,
                 deletedAt: IsNull(),
-                /* bookmarks: {
-                    deletedAt: IsNull()
-                } */
-            },
-            /* relations: {
-                bookmarks: true
-            } */
+            }
         })
 
         if (data == null) {
@@ -80,20 +70,8 @@ export class UserService {
         }
 
 
-
-        //saved bikes / bookmarks
-        /*  const ids = data.bookmarks.map(b=> b.bikeId)
-         const list = await BikeService.getBikeById(bike) */
-
-        /* if (data.bookmarks.length > 0) {
-            for (let bookmark of data.bookmarks) {
-                const bike = await BikeService.getBikeById(bookmark.bikeId)
-                bookmark.bike = bike
-            }
-        } */
-
         data.bookmarks = await BookmarkService.getBookmarksByUserId(data.userId)
-        
+
         return data
     }
 
@@ -118,7 +96,8 @@ export class UserService {
             '/user/login',
             '/user/refresh',
             '/user/register',
-            /* '/bikes', */
+            '/bikes',
+            '/reservation'
         ]
 
         if (whitelisted.includes(req.path)) {
@@ -132,8 +111,7 @@ export class UserService {
         if (token == undefined) {
             res.status(401).json({
                 message: 'NO_TOKEN_FOUND',
-                timestamp: new Date(),
-                redirect: '/user/login'
+                timestamp: new Date()
             })
             return
         }
@@ -142,8 +120,7 @@ export class UserService {
             if (err) {
                 res.status(403).json({
                     message: 'INVALID_TOKEN',
-                    timestamp: new Date(),
-                    redirect: '/user/login'
+                    timestamp: new Date()
                 })
                 return
             }
@@ -164,6 +141,21 @@ export class UserService {
         if (data == null)
             throw new Error('NOT_FOUND')
 
-        return data
+        return dataExists(data)
+    }
+
+    static async getUserIdByEmail(email: string) {
+        const user = await repo.findOne({
+            select: {
+                userId: true
+            },
+            where: {
+                email: email,
+                deletedAt: IsNull()
+            }
+        })
+
+        return dataExists(user).userId
     }
 }
+

@@ -1,16 +1,16 @@
 import type { Response } from "express";
 
-export async function defineRequest(response: Response, callback: Function){
+export async function defineRequest(response: Response, callback: Function) {
 
-    try{
+    try {
         const data = await callback()
-        if(data == null){
+        if (data == null) {
             response.status(204).send()
             return
         }
         response.json(data)
 
-    }catch(e: any){
+    } catch (e: any) {
         const code = e.message == 'NOT_FOUND' ? 404 : 500
 
         response.status(code).json({
@@ -18,4 +18,10 @@ export async function defineRequest(response: Response, callback: Function){
             timestamp: new Date()
         })
     }
+}
+
+export function dataExists(data: any) {
+    if (data == null)
+        throw new Error('NOT_FOUND')
+    return data
 }

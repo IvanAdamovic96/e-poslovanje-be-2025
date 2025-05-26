@@ -9,6 +9,12 @@ import {
 import { Bikes } from "./Bikes";
 import { User } from "./User";
 
+export enum ReservationStatus {
+  PENDING_PAYMENT = 'pending_payment',
+  CANCELLED = 'cancelled',
+  COMPLETED = 'completed',
+}
+
 @Index("fk_reservation_bikes_idx", ["bikeId"], {})
 @Index("fk_reservation_user_idx", ["userId"], {})
 @Entity("reservation", { schema: "bikes-praktikum" })
@@ -28,6 +34,17 @@ export class Reservation {
 
   @Column("decimal", { name: "total_price", precision: 10, scale: 2 })
   totalPrice: string;
+
+  @Column("datetime", { name: "reserved_until", nullable: true })
+  reservedUntil: Date | null;
+
+  @Column({
+    type: 'enum',
+    enum: ReservationStatus,
+    default: ReservationStatus.PENDING_PAYMENT,
+    name: 'status'
+  })
+  status: ReservationStatus;
 
   @Column("datetime", {
     name: "created_at",
