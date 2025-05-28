@@ -46,6 +46,12 @@ export class Reservation {
   })
   status: ReservationStatus;
 
+  @Column("text", { name: "transaction_id", nullable: true })
+  transactionId: string | null;
+
+  @Column("datetime", { name: "paid_at", nullable: true })
+  paidAt: Date | null;
+
   @Column("datetime", {
     name: "created_at",
     default: () => "CURRENT_TIMESTAMP",

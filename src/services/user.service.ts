@@ -4,8 +4,6 @@ import { User } from "../entities/User";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import type { Response } from "express";
-import { MovieService } from "./movie.service";
-import { BikeService } from "./bike.service";
 import { BookmarkService } from "./bookmark.service";
 import { dataExists } from "../utils";
 
@@ -96,8 +94,8 @@ export class UserService {
             '/user/login',
             '/user/refresh',
             '/user/register',
-            '/bikes',
-            '/reservation'
+            /* '/bikes',
+            '/reservation' */
         ]
 
         if (whitelisted.includes(req.path)) {
@@ -130,7 +128,7 @@ export class UserService {
         })
     }
 
-    static async getUserByEmail(email: string) {
+    static async getUserByEmail(email: string){
         const data = await repo.findOne({
             where: {
                 email: email,
@@ -156,6 +154,54 @@ export class UserService {
         })
 
         return dataExists(user).userId
+    }
+
+
+
+    //update
+    static async updateUser(userId: number, updatedUserData: Partial<User>): Promise<User> {
+        const user = await repo.findOne({
+            where: {
+                userId: userId,
+                deletedAt: IsNull()
+            }
+        });
+
+        if (!user) {
+            throw new Error('USER_NOT_FOUND');
+        }
+
+        // Provera da li pokusava promeniti email i da li je taj novi email vec zauzet
+        if (updatedUserData.email && updatedUserData.email !== user.email) {
+            const existingUserWithNewEmail = await repo.findOne({
+                where: {
+                    email: updatedUserData.email,
+                    deletedAt: IsNull()
+                }
+            });
+            if (existingUserWithNewEmail) {
+                throw new Error('EMAIL_ALREADY_IN_USE');
+            }
+        }
+
+        user.firstName = updatedUserData.firstName ?? user.firstName;
+        user.lastName = updatedUserData.lastName ?? user.lastName;
+        user.email = updatedUserData.email ?? user.email;
+        user.phone = updatedUserData.phone ?? user.phone;
+
+        // 4. Ako se menja lozinka, hashuj je
+        if (updatedUserData.password) {
+            user.password = await bcrypt.hash(updatedUserData.password, 12);
+        }
+
+        user.updatedAt = new Date(); // Ažuriraj updatedAt timestamp
+
+        // 5. Sačuvaj ažuriranog korisnika
+        await repo.save(user);
+
+        // Vrati ažuriranog korisnika, ali bez lozinke
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword as User;
     }
 }
 

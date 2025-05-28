@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { defineRequest } from "../utils";
 import { UserService } from "../services/user.service";
+import type { User } from "../entities/User";
 
 export const UserRoute = Router()
 
@@ -22,7 +23,14 @@ UserRoute.get('/self', async (req: any, res) => {
     )
 })
 
-
+UserRoute.put('/', UserService.validateToken, async (req: any, res) => {
+    await defineRequest(res, async () => {
+        const userId = req.user.id;
+        const updatedUserData: Partial<User> = req.body;
+        return await UserService.updateUser(userId, updatedUserData);
+    });
+}
+);
 
 
 UserRoute.post('/refresh', async (req, res) => {
