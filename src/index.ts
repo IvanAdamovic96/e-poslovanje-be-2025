@@ -18,8 +18,8 @@ app.use(cors());
 
 // Application routes
 
-app.use(UserService.validateToken);
 app.use('/bikes', BikeRoute)
+app.use(UserService.validateToken);
 app.use('/user', UserRoute)
 app.use('/bookmark', BookmarkRoute)
 app.use('/reservation', ReservationRoute)

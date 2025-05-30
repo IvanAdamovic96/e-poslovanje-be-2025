@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { defineRequest } from "../utils";
 import { BikeService } from "../services/bike.service";
+import { UserService } from "../services/user.service";
 
 export const BikeRoute = Router()
 
@@ -17,27 +18,27 @@ BikeRoute.get('/:id', async (req, res) => {
     })
 })
 
-BikeRoute.get('/brands', async (req, res) => {
+/* BikeRoute.get('/brands', async (req, res) => {
     await defineRequest(res, async () => {
         return await BikeService.getBikeBrands()
     })
-})
+}) */
 
 
-BikeRoute.post('/', async (req, res) => {
+BikeRoute.post('/',UserService.validateToken, async (req, res) => {
     await defineRequest(res, async () =>
         await BikeService.createBike(req.body)
     )
 })
 
-BikeRoute.put('/edit/:id', async (req, res) => {
+BikeRoute.put('/edit/:id',UserService.validateToken, async (req, res) => {
     await defineRequest(res, async () => {
         const id = Number(req.params.id)
         await BikeService.updateBike(id, req.body)
     })
 })
 
-BikeRoute.delete('/:id', async (req, res) => {
+BikeRoute.delete('/:id',UserService.validateToken, async (req, res) => {
     await defineRequest(res, async () => {
         const id = Number(req.params.id)
         await BikeService.deleteBikeById(id)

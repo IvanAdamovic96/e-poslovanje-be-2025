@@ -171,7 +171,6 @@ export class UserService {
             throw new Error('USER_NOT_FOUND');
         }
 
-        // Provera da li pokusava promeniti email i da li je taj novi email vec zauzet
         if (updatedUserData.email && updatedUserData.email !== user.email) {
             const existingUserWithNewEmail = await repo.findOne({
                 where: {
@@ -189,17 +188,13 @@ export class UserService {
         user.email = updatedUserData.email ?? user.email;
         user.phone = updatedUserData.phone ?? user.phone;
 
-        // 4. Ako se menja lozinka, hashuj je
         if (updatedUserData.password) {
             user.password = await bcrypt.hash(updatedUserData.password, 12);
         }
 
-        user.updatedAt = new Date(); // Ažuriraj updatedAt timestamp
+        user.updatedAt = new Date();
 
-        // 5. Sačuvaj ažuriranog korisnika
         await repo.save(user);
-
-        // Vrati ažuriranog korisnika, ali bez lozinke
         const { password, ...userWithoutPassword } = user;
         return userWithoutPassword as User;
     }

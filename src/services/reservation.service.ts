@@ -143,53 +143,6 @@ export class ReservationService {
 
 
 
-    /* static async payReservation(id: number, email: string) {
-        const user: User = UserService.getUserByEmail(email)
-
-        const data: Reservation = await reservationRepo.findOneOrFail({
-            select: {
-                reservationId: true,
-                bikeId: true,
-                totalPrice: true,
-                bike: true,
-                createdAt: true,
-
-            },
-            where: {
-                reservationId: id,
-                userId: user.userId,
-                deletedAt: IsNull()
-            }
-        })
-
-        const res: Reservation = await this.getSimpleReservationById(id, email)
-
-        const rsp = await axios.request({
-            url: 'https://sim.purs.singidunum.ac.rs/api/invoice',
-            method: 'POST',
-            data: {
-                indeks: process.env.PURS_TOKEN,
-                token: process.env.PURS_TOKEN,
-                customer: `${user.firstName} ${user.lastName}`,
-                address: user.email,
-                taxId: user.phone,
-                items: [{
-                    name: res.bike.model,
-                    amount: res.bike.brand,
-                    price: res.totalPrice
-                }]
-            }
-        })
-
-
-        const reservation = await reservationRepo.findOneByOrFail({
-
-        })
-
-    } */
-
-
-
 
     static async deleteReservation(reservationId: number, userId: number): Promise<Reservation> {
         return await AppDataSource.transaction(async transaction => {

@@ -1,4 +1,4 @@
-import { IsNull } from "typeorm"
+import { IsNull, Unique } from "typeorm"
 import { AppDataSource } from "../db"
 import { Bikes } from "../entities/Bikes"
 import type { BikeModel } from "../models/bike.model"
@@ -34,7 +34,6 @@ export class BikeService {
                 weight: true,
                 createdAt: true,
                 updatedAt: true
-                //ne trebamo vracati deletedAt
             },
             where: {
                 deletedAt: IsNull()
@@ -57,36 +56,7 @@ export class BikeService {
     }
 
 
-    /* static async getBikeBrands() {
-        return await repo.find({
-            select: {
-                brand: true,
-            },
-            where: {
-                deletedAt: IsNull()
-            }
-        })
-    } */
-    static async getBikeBrands() {
-        console.log('test')
-        const findOptions = {
-            select: {
-                brand: true,
-            },
-            where: {
-                deletedAt: IsNull()
-            }
-        };
-        console.log('Opcije za repo.find() (getBikeBrands):', JSON.stringify(findOptions, null, 2));
-        try {
-            const brands = await repo.find(findOptions);
-            console.log('Rezultat getBikeBrands():', JSON.stringify(brands, null, 2));
-            return brands;
-        } catch (error) {
-            console.error('Greška u getBikeBrands():', error);
-            throw error;
-        }
-    }
+    
 
     static async createBike(model: Bikes) {
         await repo.save({
@@ -150,7 +120,7 @@ export class BikeService {
         for (const bookmark of bookmarks) {
             bookmark.deletedAt = new Date()
         }
-        
+
         await AppDataSource.transaction(async () => {
             await repo.save(bike)
             if (bookmarks.length > 0) {
